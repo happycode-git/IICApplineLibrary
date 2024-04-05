@@ -42,7 +42,7 @@ import algoliasearch from "algoliasearch";
 import QRCode from "react-native-qrcode-svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Clipboard from "expo-clipboard";
-import * as Sharing from 'expo-sharing';
+import * as Sharing from "expo-sharing";
 //
 import { initializeApp } from "firebase/app";
 import {
@@ -439,9 +439,7 @@ export function ShowMoreView({ height, children, theme }) {
   return (
     <View>
       <View
-        style={[
-          { overflow: "hidden", height: showMore ? undefined : height },
-        ]}
+        style={[{ overflow: "hidden", height: showMore ? undefined : height }]}
       >
         {children}
         {!showMore && (
@@ -1097,7 +1095,7 @@ export function TextFieldOne({
   function onType(text) {
     setter(text);
     if (onChange !== undefined) {
-      onChange(text)
+      onChange(text);
     }
   }
   return (
@@ -1172,7 +1170,7 @@ export function TextAreaOne({
   function onType(text) {
     setter(text);
     if (onChange !== undefined) {
-      onChange(text)
+      onChange(text);
     }
   }
 
@@ -2360,7 +2358,12 @@ export function Map({
     </View>
   );
 }
-export function InteractiveMap({ onMarkerPress, height = 300, initialLat = 47.92165474151632, initialLon = 106.91706877201796 }) {
+export function InteractiveMap({
+  onMarkerPress,
+  height = 300,
+  initialLat = 47.92165474151632,
+  initialLon = 106.91706877201796,
+}) {
   const [markerCoords, setMarkerCoords] = useState(null);
 
   const handleMapPress = (event) => {
@@ -2585,7 +2588,6 @@ export function AudioPlayer({ audioName, audioPath, sliderColor, theme }) {
   );
 }
 export function VideoPlayer({
-  videoRef = null,
   videoPath,
   radius,
   autoPlay = false,
@@ -2593,10 +2595,9 @@ export function VideoPlayer({
   noControls = false,
   width = "100%",
   height = 300,
-  startTime = "00:00",
 }) {
   const [isLoading, setIsLoading] = useState(true);
-
+  const video = useRef(null);
   const handleLoadStart = () => {
     setIsLoading(true);
   };
@@ -2605,10 +2606,10 @@ export function VideoPlayer({
     console.log("THE VIDEO IS LOADED");
     setIsLoading(false);
     if (autoPlay) {
-      await videoRef.current.playAsync();
+      await video.current.playAsync();
     }
     if (startTime !== "00:00") {
-      await videoRef.current.setPositionAsync(parseTime(startTime) * 1000);
+      await video.current.setPositionAsync(parseTime(startTime) * 1000);
     }
   };
 
@@ -2624,10 +2625,10 @@ export function VideoPlayer({
       try {
         if (typeof videoPath === "string") {
           // If videoPath is a string, assume it's a URI
-          await videoRef.current.loadAsync({ uri: videoPath }, {}, false);
+          await video.current.loadAsync({ uri: videoPath }, {}, false);
         } else {
           // If videoPath is not a string, assume it's a local require statement
-          await videoRef.current.loadAsync(videoPath, {}, false);
+          await video.current.loadAsync(videoPath, {}, false);
         }
       } catch (error) {
         console.error("Error loading video:", error);
@@ -4809,18 +4810,20 @@ export async function function_Refund(paymentIntentID, amount, successFunc) {
 }
 export async function function_DownloadFileToDevice(fileUri) {
   try {
-    const fileUriParts = fileUri.split('.');
+    const fileUriParts = fileUri.split(".");
     const fileExtension = fileUriParts[fileUriParts.length - 1];
-    const downloadDest = `${FileSystem.documentDirectory}PhotoOPphoto-${randomString(20)}.${fileExtension}`;
+    const downloadDest = `${
+      FileSystem.documentDirectory
+    }PhotoOPphoto-${randomString(20)}.${fileExtension}`;
 
     const { uri } = await FileSystem.downloadAsync(fileUri, downloadDest);
-    console.log('File downloaded to:', uri);
+    console.log("File downloaded to:", uri);
     return uri;
   } catch (error) {
-    console.error('Error downloading file:', error);
+    console.error("Error downloading file:", error);
     return null;
   }
-};
+}
 export async function function_ShareFile(fileUri) {
   try {
     const isAvailable = await Sharing.isAvailableAsync();
@@ -4835,7 +4838,7 @@ export async function function_ShareFile(fileUri) {
   } catch (error) {
     console.error("Error sharing file:", error);
   }
-};
+}
 
 // STYLES
 export const format = StyleSheet.create({
@@ -5297,10 +5300,7 @@ export async function firebase_GetAllDocuments(
     }
   } else {
     if (whereField !== "" && whereField !== null && whereField !== undefined) {
-      queryRef = query(
-        queryRef,
-        where(whereField, whereCondition, whereValue),
-      );
+      queryRef = query(queryRef, where(whereField, whereCondition, whereValue));
     } else {
       queryRef = query(queryRef);
     }
