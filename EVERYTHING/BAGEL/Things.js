@@ -2980,6 +2980,55 @@ export function ProgressCircle({
     </View>
   );
 }
+export function FullProgressBar({ progress, text, color, theme }) {
+  return (
+    <View
+      style={[
+        layout.absolute,
+        {
+          top: 0,
+          right: 0,
+          left: 0,
+          bottom: 0,
+          backgroundColor: "rgba(0,0,0,0.6)",
+          zIndex: 4000,
+        },
+        layout.separate_vertical,
+      ]}
+    >
+      <View></View>
+      <View style={[layout.separate_horizontal]}>
+        <View></View>
+        <View
+          style={[
+            {
+              width: width * 0.4,
+              backgroundColor: secondaryThemedBackgroundColor(theme),
+            },
+            format.radius,
+            layout.padding,
+          ]}
+        >
+          {text !== undefined && (
+            <View>
+              <TextView theme={theme} center={true}>
+                {text}
+              </TextView>
+              <Spacer height={6} />
+            </View>
+          )}
+          <ProgressBar
+            progress={progress}
+            color={color !== undefined ? color : "#117DFA"}
+            theme={theme}
+          />
+        </View>
+        <View></View>
+      </View>
+      <View></View>
+    </View>
+  );
+}
 export function ImagesView({ images, styles, onPageSelected }) {
   const [currentPage, setCurrentPage] = useState(0);
   const total = images.length;
@@ -3707,7 +3756,7 @@ export function OptionsView({ options, setToggle, theme }) {
           bottom: 0,
           left: 0,
           right: 0,
-          backgroundColor: "rgba(0,0,0,0.5)",
+          backgroundColor: "rgba(0,0,0,0.8)",
         },
         layout.separate_vertical,
       ]}
@@ -3719,6 +3768,8 @@ export function OptionsView({ options, setToggle, theme }) {
             { backgroundColor: secondaryThemedBackgroundColor(theme) },
             format.radius,
             layout.margin_horizontal,
+            layout.center,
+            { maxWidth: 500 },
           ]}
         >
           {/* OPTIONS HERE */}
@@ -4005,6 +4056,15 @@ export function removeDuplicatesByProperty(array, property) {
     }
   });
 }
+export function replaceObjectByProperty(array, property, propertyValue, newObj) {
+  return array.map(obj => {
+    if (obj[property] === propertyValue) {
+      return newObj;
+    } else {
+      return obj;
+    }
+  });
+}
 export function shuffleArray(array) {
   let currentIndex = array.length,
     temporaryValue,
@@ -4198,6 +4258,10 @@ export function getFirstDateOfMonth(monthNum, year) {
   const firstDate = new Date(year, monthNum - 1, 1);
   const dayOfWeek = firstDate.getDay();
   return dayOfWeek;
+}
+export function getDayOfWeekName(dayNumber) {
+  const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  return daysOfWeek[dayNumber];
 }
 export function dateToHHMM(date) {
   return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
@@ -5807,7 +5871,8 @@ export async function storage_UploadImage(
   setLoading,
   image,
   path,
-  setProgress
+  setProgress,
+  finished = false
 ) {
   setLoading(true);
   try {
@@ -5836,6 +5901,7 @@ export async function storage_UploadImage(
       },
       async () => {
         // Handle successful completion
+        finished(true)
         setProgress(0);
         setLoading(false); // Update loading state
       }
@@ -5845,7 +5911,7 @@ export async function storage_UploadImage(
     setLoading(false); // Update loading state in case of an error
   }
 }
-export async function storage_UploadFile(setLoading, file, path, setProgress) {
+export async function storage_UploadFile(setLoading, file, path, setProgress, finished = false) {
   setLoading(true);
 
   try {
@@ -5874,6 +5940,7 @@ export async function storage_UploadFile(setLoading, file, path, setProgress) {
       },
       async () => {
         // Handle successful completion
+        finished(true)
         setLoading(false); // Update loading state
       }
     );
